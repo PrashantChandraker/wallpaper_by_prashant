@@ -12,6 +12,9 @@ class Wallpaper extends StatefulWidget {
 
 class _WallpaperState extends State<Wallpaper> {
 
+  List images =[];
+  int pageNo = 1;
+
 @override
 void initState(){
   super.initState();
@@ -27,6 +30,16 @@ void initState(){
       
       Map result = jsonDecode(value.body);
       print(result);
+      setState(() {
+        images = result["photos"];
+      });
+      print("Photos => ${images}");
+    });
+  }
+
+  loadMore() async{
+    setState(() {
+      pageNo = pageNo+1;
     });
   }
 
@@ -35,25 +48,29 @@ void initState(){
     return Scaffold(
       body: Column(
         children: [
+          SizedBox(height: 20,),
           Expanded(
             child: Container(
               child: GridView.builder(
-                  itemCount: 80,
+                padding: EdgeInsets.all(5),
+                  itemCount: images.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
-                      crossAxisSpacing: 2,
-                      childAspectRatio: 2 / 3,
-                      mainAxisSpacing: 2),
+                      crossAxisSpacing:5,
+                        mainAxisExtent: 100,
+                       childAspectRatio: 1.2,
+                      mainAxisSpacing: 5),
                   itemBuilder: (context, index) {
                     return Container(
                       color: Colors.white,
+                      child: Image.network(images[index]["src"]["tiny"], fit: BoxFit.cover,),
                     );
                   }),
             ),
           ),
            SizedBox(height: 10,),
           BeautifulButton(
-            label: 'Beautiful Button',
+            label: 'Load More...',
             onPressed: () {
               // Add button action here
               print('Button Pressed');
